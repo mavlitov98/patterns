@@ -6,74 +6,75 @@ namespace Creational\Builder;
 
 /**
  * Паттерн Builder.
+ *
+ * В этом примере класс User представляет пользователя с набором свойств: имя, возраст, электронная почта и адрес.
+ * Класс UserBuilder предоставляет методы для установки каждого свойства пользователя с возможностью цепного вызова.
+ * Метод build() возвращает готовый объект User.
  */
 
-class Product
+class User
+{
+    public function __construct(
+        private readonly string $name,
+        private readonly int $age,
+        private readonly string $email,
+        private readonly string $address
+    ) {
+    }
+
+    public function getInfo(): string
+    {
+        return "Name: {$this->name}, Age: {$this->age}, Email: {$this->email}, Address: {$this->address}";
+    }
+}
+
+class UserBuilder
 {
     private string $name;
+    private int $age;
+    private string $email;
+    private string $address;
 
-    public function setName(string $name): void
+    public function setName(string $name): self
     {
         $this->name = $name;
+
+        return $this;
     }
 
-    public function getName(): string
+    public function setAge(int $age): self
     {
-        return $this->name;
+        $this->age = $age;
+
+        return $this;
+    }
+
+    public function setEmail(string $email): self
+    {
+        $this->email = $email;
+
+        return $this;
+    }
+
+    public function setAddress(string $address): self
+    {
+        $this->address = $address;
+
+        return $this;
+    }
+
+    public function build(): User
+    {
+        return new User($this->name, $this->age, $this->email, $this->address);
     }
 }
 
-class Factory
-{
-    private Builder $builder;
+// Использование паттерна Builder
+$user = (new UserBuilder())
+    ->setName("Builder Petrovich")
+    ->setAge(25)
+    ->setEmail("builder@example.com")
+    ->setAddress("123 Street, City")
+    ->build();
 
-    public function __construct(Builder $builder)
-    {
-        $this->builder = $builder;
-        $this->builder->buildProduct();
-    }
-
-    public function getProduct(): Product
-    {
-        return $this->builder->getProduct();
-    }
-}
-
-abstract class Builder
-{
-    protected Product $product;
-
-    final public function getProduct(): Product
-    {
-        return $this->product;
-    }
-
-    public function buildProduct(): void
-    {
-        $this->product = new Product();
-    }
-}
-
-class FirstBuilder extends Builder
-{
-    public function buildProduct(): void
-    {
-        parent::buildProduct();
-        $this->product->setName('Результат из FirstBuilder');
-    }
-}
-
-class SecondBuilder extends Builder
-{
-    public function buildProduct(): void
-    {
-        parent::buildProduct();
-        $this->product->setName('Результат из SecondBuilder');
-    }
-}
-
-$first = new Factory(new FirstBuilder());
-$second = new Factory(new SecondBuilder());
-
-var_dump($first->getProduct()->getName()); // Результат из FirstBuilder
-var_dump($second->getProduct()->getName()); // Результат из SecondBuilder
+var_dump($user->getInfo());
