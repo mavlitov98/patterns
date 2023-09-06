@@ -61,6 +61,6 @@ class Chef
 
 // Клиентский код
 $chef = new Chef();
-$chef->handleOrder('Хочу пиццу');
+$chef->handleOrder('У вас есть пицца?');
 
 
